@@ -20,8 +20,10 @@ export const Editor: VFC = () => {
 				allowNonTsExtensions: true
 			});
 
+			var code = localStorage.getItem('code') ?? 'function x() { console.log("Hello world!"); }';
+
 			var e = monaco.editor.create(monacoEl.current!, {
-				value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+				value: code,
 				language: 'javascript',
 				theme: 'vs-dark'
 			});
@@ -29,7 +31,14 @@ export const Editor: VFC = () => {
 				console.log(eval(e.getValue()));
 				return false;
 			});
+			
 			setEditor(e);
+
+			// auto save on change
+			e.onDidChangeModelContent(() => {
+				localStorage.setItem('code', e.getValue());
+			}
+			);
 		}
 
 		return () => editor?.dispose();
